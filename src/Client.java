@@ -1,12 +1,14 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class Client {
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String username;
+    private final UUID uuid = UUID.randomUUID();
 
     public Client(Socket socket, String username) {
         try {
@@ -21,6 +23,8 @@ public class Client {
 
     public void sendMessage() {
         try {
+            bufferedWriter.write(uuid.toString());
+            bufferedWriter.newLine();
             bufferedWriter.write(username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
@@ -77,6 +81,7 @@ public class Client {
         String username = scanner.nextLine();
         Socket socket = new Socket("localhost", 1234);
         Client client = new Client(socket, username);
+
         client.listenForMessage();
         client.sendMessage();
     }

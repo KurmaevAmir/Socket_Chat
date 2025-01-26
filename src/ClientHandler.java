@@ -8,12 +8,14 @@ public class ClientHandler implements Runnable {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String clientUsername;
+    private String identifier;
 
     public ClientHandler(Socket socket) {
         try {
             this.socket = socket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.identifier = bufferedReader.readLine();
             this.clientUsername = bufferedReader.readLine();
             clientHandlers.add(this);
             broadcastMessage("SERVER: " + clientUsername + " подключился");
@@ -40,7 +42,7 @@ public class ClientHandler implements Runnable {
     public void broadcastMessage(String messageToSend) {
         for (ClientHandler clientHandler : clientHandlers) {
             try {
-                if (!clientHandler.clientUsername.equals(clientUsername)) {
+                if (!clientHandler.identifier.equals(identifier)) {
                     clientHandler.bufferedWriter.write(messageToSend);
                     clientHandler.bufferedWriter.newLine();
                     clientHandler.bufferedWriter.flush();
